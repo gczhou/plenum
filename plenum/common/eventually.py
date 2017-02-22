@@ -18,6 +18,7 @@ FlexFunc = TypeVar('flexFunc', CoroWrapper, Callable[[], T])
 
 # increase this number to allow eventually to change timeouts proportionatly
 def getSlowFactor():
+    # TODO: this will return None if numOfCpus is not 8 or <= 4
     numOfCpus = os.cpu_count()
     if numOfCpus == 8 or numOfCpus is None:
         return 1

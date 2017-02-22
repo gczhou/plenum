@@ -36,7 +36,7 @@ from plenum.test.test_ledger_manager import TestLedgerManager
 from plenum.test.test_stack import StackedTester, getTestableStack, CONNECTED, \
     checkRemoteExists, RemoteState, checkState
 from plenum.test.testable import Spyable
-from plenum.test.waits import expectedWait
+from plenum.test.waits import expectedNodeInterconnectionTime
 
 logger = getlogger()
 
@@ -466,7 +466,7 @@ async def checkNodesConnected(stacks: Iterable[Union[TestNode, TestClient]],
                               overrideTimeout=None):
     expectedRemoteState = expectedRemoteState if expectedRemoteState else CONNECTED
     # run for how long we expect all of the connections to take
-    wait = overrideTimeout if overrideTimeout else expectedWait(len(stacks))
+    wait = overrideTimeout if overrideTimeout else expectedNodeInterconnectionTime(len(stacks))
     logger.debug("waiting for {} seconds to check connections...".format(wait))
     # verify every node can see every other as a remote
     funcs = [

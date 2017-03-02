@@ -34,7 +34,7 @@ def testMsgSendingTime(pool, nodeReg):
                             nodeNames[0],
                             nodeNames[1],
                             msg,
-                            timeout=1))
+                            customTimeout=1))
 
 
 def testCorrectNumOfProtocolInstances(pool):

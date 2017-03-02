@@ -11,7 +11,7 @@ from plenum.common.log import getlogger
 from plenum.common.util import getMaxFailures
 from plenum.test.cli.mock_output import MockOutput
 from plenum.test.cli.test_keyring import createNewKeyring
-from plenum.test.helper import checkSufficientRepliesRecvd
+from plenum.test.helper import checkSufficientRepliesReceived
 from plenum.test.spy_helpers import getAllArgs
 from plenum.test.test_client import TestClient
 from plenum.test.test_node import TestNode, checkPoolReady
@@ -190,7 +190,7 @@ def checkRequest(cli, operation):
     # Ensure client gets back the replies
     lastReqId = wallet._getIdData().lastReqId
     cli.looper.run(eventually(
-            checkSufficientRepliesRecvd,
+            checkSufficientRepliesReceived,
             client.inBox,
             lastReqId,
             f,

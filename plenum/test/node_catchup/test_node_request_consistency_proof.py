@@ -12,7 +12,7 @@ from plenum.test.test_ledger_manager import TestLedgerManager
 from plenum.test.test_node import checkNodesConnected
 
 
-@pytest.mark.skipif('sys.platform == "win32"', reason='SOV-465')
+# @pytest.mark.skipif('sys.platform == "win32"', reason='SOV-465')
 def testNodeRequestingConsProof(txnPoolNodeSet, nodeCreatedAfterSomeTxns):
     """
     All of the 4 old nodes delay the processing of LEDGER_STATUS from the newly
@@ -53,7 +53,7 @@ def testNodeRequestingConsProof(txnPoolNodeSet, nodeCreatedAfterSomeTxns):
 
     print("sending 10 requests")
     sendRandomRequests(wallet, client, 10)
-    looper.run(checkNodesConnected(txnPoolNodeSet, customTimeout=60))
+    looper.run(checkNodesConnected(txnPoolNodeSet))
 
     # `ConsistencyProofsTimeout` is set to 60 sec, so need to wait more than
     # 60 sec.

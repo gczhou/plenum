@@ -5,7 +5,7 @@ import pytest
 from plenum.common.eventually import eventually
 from plenum.common.types import PrePrepare, f
 from plenum.common.util import adict
-from plenum.test.helper import checkViewNoForNodes, getPrimaryReplica, \
+from plenum.test.helper import waitForViewChange, getPrimaryReplica, \
     sendReqsToNodesAndVerifySuffReplies
 from plenum.test.spy_helpers import getAllReturnVals
 
@@ -61,5 +61,5 @@ def testInstChangeWithMoreReqLat(looper, setup):
         node.checkPerformance()
         assert any(getAllReturnVals(node.monitor,
                                     node.monitor.isMasterReqLatencyTooHigh))
-    looper.run(eventually(partial(checkViewNoForNodes, nodes, 1),
-                          retryWait=1, timeout=20))
+
+    waitForViewChange(looper, nodes)

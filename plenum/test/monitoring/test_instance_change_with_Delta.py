@@ -7,7 +7,7 @@ from plenum.common.log import getlogger
 from plenum.common.types import PrePrepare
 from plenum.common.util import adict
 from plenum.server.node import Node
-from plenum.test.helper import checkViewNoForNodes, \
+from plenum.test.helper import waitForViewChange, \
     getPrimaryReplica, sendReqsToNodesAndVerifySuffReplies
 
 nodeCount = 7
@@ -118,4 +118,5 @@ def testInstChangeWithLowerRatioThanDelta(looper, step3, wallet1, client1):
     waitForNextPerfCheck(looper, step3.nodes, step3.perfChecks)
 
     # verify all nodes have undergone an instance change
-    looper.run(eventually(checkViewNoForNodes, step3.nodes, 1, timeout=10))
+
+    waitForViewChange(looper, step3.nodes, expectedViewNo=1)

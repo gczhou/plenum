@@ -2,7 +2,7 @@ from plenum.common.eventually import eventually
 from plenum.common.log import getlogger
 from plenum.common.types import Commit, PrePrepare
 from plenum.test.helper import sendRandomRequests, \
-    checkSufficientRepliesForRequests, checkLedgerEquality, getPrimaryReplica, \
+    waitForSufficientRepliesForRequests, checkLedgerEquality, getPrimaryReplica, \
     checkAllLedgersEqual
 from plenum.test.test_node import getNonPrimaryReplicas
 
@@ -63,7 +63,7 @@ def testOrderingCase2(looper, nodeSet, up, client1, wallet1):
         logger.debug('{} would be delaying commits'.format(node))
         node.nodeIbStasher.delay(specificCommits)
 
-    checkSufficientRepliesForRequests(looper, client1, requests)
+    waitForSufficientRepliesForRequests(looper, client1, requests)
 
     def ensureSlowNodesHaveAllTxns():
         nonlocal node1, node2

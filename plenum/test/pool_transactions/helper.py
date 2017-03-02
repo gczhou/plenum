@@ -10,7 +10,7 @@ from plenum.common.txn import STEWARD, TXN_TYPE, NYM, ROLE, TARGET_NYM, ALIAS, \
     NODE_PORT, CLIENT_IP, NODE_IP, DATA, NODE, CLIENT_PORT, VERKEY, SERVICES, \
     VALIDATOR
 from plenum.common.util import randomString, hexToFriendly
-from plenum.test.helper import checkSufficientRepliesReceived
+from plenum.test.helper import waitForSufficientRepliesForRequests
 from plenum.test.test_client import TestClient, genTestClient
 from plenum.test.test_node import TestNode
 
@@ -34,10 +34,8 @@ def addNewClient(role, looper, creatorClient: Client, creatorWallet: Wallet,
     req = creatorWallet.signOp(op)
     creatorClient.submitReqs(req)
 
-    nodeCount = len(creatorClient.nodeReg)
-    looper.run(eventually(checkSufficientRepliesReceived, creatorClient.inBox,
-                          req.reqId, 1,
-                          retryWait=1, timeout=3 * nodeCount))
+    waitForSufficientRepliesForRequests(looper, creatorClient, [req], fVal=1)
+
     return wallet
 
 
@@ -64,10 +62,8 @@ def addNewNode(looper, stewardClient, stewardWallet, newNodeName, tdir, tconf,
     req = stewardWallet.signOp(op)
     stewardClient.submitReqs(req)
 
-    nodeCount = len(stewardClient.nodeReg)
-    looper.run(eventually(checkSufficientRepliesReceived, stewardClient.inBox,
-                          req.reqId, 1,
-                          retryWait=1, timeout=5 * nodeCount))
+    waitForSufficientRepliesForRequests(looper, stewardClient, [req], fVal=1)
+
     initLocalKeep(newNodeName, tdir, sigseed, override=True)
     node = nodeClass(newNodeName, basedirpath=tdir, config=tconf,
                      ha=(nodeIp, nodePort), cliha=(clientIp, clientPort),
@@ -112,9 +108,8 @@ def changeNodeHa(looper, stewardClient, stewardWallet, node, nodeHa, clientHa):
 
     req = stewardWallet.signOp(op)
     stewardClient.submitReqs(req)
-    looper.run(eventually(checkSufficientRepliesReceived, stewardClient.inBox,
-                          req.reqId, 1,
-                          retryWait=1, timeout=5))
+    waitForSufficientRepliesForRequests(looper, stewardClient, [req], fVal=1)
+
     node.nodestack.clearLocalKeep()
     node.nodestack.clearRemoteKeeps()
     node.clientstack.clearLocalKeep()
@@ -135,9 +130,8 @@ def changeNodeKeys(looper, stewardClient, stewardWallet, node, verkey):
     req = stewardWallet.signOp(op)
     stewardClient.submitReqs(req)
 
-    looper.run(eventually(checkSufficientRepliesReceived, stewardClient.inBox,
-                          req.reqId, 1,
-                          retryWait=1, timeout=5))
+    waitForSufficientRepliesForRequests(looper, stewardClient, [req], fVal=1)
+
     node.nodestack.clearLocalRoleKeep()
     node.nodestack.clearRemoteRoleKeeps()
     node.nodestack.clearAllDir()
@@ -157,10 +151,8 @@ def suspendNode(looper, stewardClient, stewardWallet, nodeNym, nodeName):
     }
     req = stewardWallet.signOp(op)
     stewardClient.submitReqs(req)
-    looper.run(eventually(checkSufficientRepliesReceived, stewardClient.inBox,
-                          req.reqId, 1,
-                          retryWait=1, timeout=5))
 
+    waitForSufficientRepliesForRequests(looper, stewardClient, [req], fVal=1)
 
 def cancelNodeSuspension(looper, stewardClient, stewardWallet, nodeNym,
                          nodeName):
@@ -175,9 +167,7 @@ def cancelNodeSuspension(looper, stewardClient, stewardWallet, nodeNym,
 
     req = stewardWallet.signOp(op)
     stewardClient.submitReqs(req)
-    looper.run(eventually(checkSufficientRepliesReceived, stewardClient.inBox,
-                          req.reqId, 1,
-                          retryWait=1, timeout=10))
+    waitForSufficientRepliesForRequests(looper, stewardClient, [req], fVal=1)
 
 
 def buildPoolClientAndWallet(clientData, tempDir, clientClass=None,

@@ -31,7 +31,7 @@ from plenum.common.types import HA, CLIENT_STACK_SUFFIX, PLUGIN_BASE_DIR_PATH, \
 from plenum.common.util import getNoInstances, getMaxFailures
 from plenum.server.notifier_plugin_manager import PluginManager
 from plenum.test.helper import randomOperation, \
-    checkReqAck, checkLastClientReqForNode, checkSufficientRepliesReceived, \
+    checkReqAck, checkLastClientReqForNode, waitForSufficientRepliesForRequests, \
     checkViewNoForNodes, requestReturnedToNode, randomText, \
     mockGetInstalledDistributions, mockImportModule, createTempDir
 from plenum.test.node_request.node_request_helper import checkPrePrepared, \
@@ -369,14 +369,7 @@ def replied1(looper, nodeSet, client1, committed1, wallet1, faultyNodes):
                           retryWait=1,
                           timeout=orderingTimeout))
 
-    executionTimeout = waits.expectedTransactionExecutionTime(numOfNodes)
-    looper.run(eventually(
-        checkSufficientRepliesReceived,
-        client1.inBox,
-        committed1.reqId,
-        getMaxFailures(len(nodeSet)),
-        retryWait=2,
-        timeout=executionTimeout))
+    waitForSufficientRepliesForRequests(looper, client1, [committed1])
     return committed1
 
 

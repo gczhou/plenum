@@ -10,7 +10,7 @@ from plenum.common.port_dispenser import genHa
 from plenum.common.script_helper import changeHA
 from plenum.common.signer_simple import SimpleSigner
 from plenum.common.util import getMaxFailures
-from plenum.test.helper import checkSufficientRepliesReceived, \
+from plenum.test.helper import waitForSufficientRepliesForRequests, \
     sendReqsToNodesAndVerifySuffReplies
 from plenum.test.test_client import genTestClient
 from plenum.test.test_node import TestNode, checkNodesConnected, \
@@ -70,9 +70,8 @@ def changeNodeHa(looper, txnPoolNodeSet, tdirWithPoolTxns,
     # change HA
     stewardClient, req = changeHA(looper, tconf, subjectedNode.name, nodeSeed,
                                   nodeStackNewHA, stewardName, stewardsSeed)
-    f = getMaxFailures(len(stewardClient.nodeReg))
-    looper.run(eventually(checkSufficientRepliesReceived, stewardClient.inBox,
-                          req.reqId, f, retryWait=1, timeout=20))
+
+    waitForSufficientRepliesForRequests(looper, stewardClient, [req])
 
     # stop node for which HA will be changed
     subjectedNode.stop()

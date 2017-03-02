@@ -439,10 +439,17 @@ class MockedBlacklister:
         return True
 
 
-def checkPoolReady(looper: Looper, nodes: Sequence[TestNode],
-                   timeout: int = 20):
+def checkPoolReady(looper: Looper,
+                   nodes: Sequence[TestNode],
+                   customTimeout):
+    """
+    Check that pool is in Ready state
+    """
+
+    timeout = customTimeout or waits.expectedGetReadyTimeout(len(nodes))
     looper.run(
-            eventually(checkNodesAreReady, nodes, retryWait=.25,
+            eventually(checkNodesAreReady, nodes,
+                       retryWait=.25,
                        timeout=timeout,
                        ratchetSteps=10))
 
@@ -615,7 +622,7 @@ def ensureElectionsDone(looper: Looper,
     poolReadyTimeout = 1/3 * timeout
     setupCheckTimeout = 2/3 * timeout
 
-    checkPoolReady(looper=looper, nodes=nodes, timeout=poolReadyTimeout)
+    checkPoolReady(looper, nodes, customTimeout=poolReadyTimeout)
 
     return checkProtocolInstanceSetup(
         looper=looper,

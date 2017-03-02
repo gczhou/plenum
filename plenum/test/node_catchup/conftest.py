@@ -23,7 +23,7 @@ def nodeCreatedAfterSomeTxns(txnPoolNodesLooper, txnPoolNodeSet,
     txnPoolNodesLooper.run(client.ensureConnectedToNodes())
     txnCount = getValueFromModule(request, "txnCount", 5)
     sendReqsToNodesAndVerifySuffReplies(txnPoolNodesLooper, wallet, client,
-                                        txnCount, timeoutPerReq=25)
+                                        txnCount, customTimeoutPerReq=25)
 
     newStewardName = randomString()
     newNodeName = "Epsilon"

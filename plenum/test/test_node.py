@@ -441,7 +441,7 @@ class MockedBlacklister:
 
 def checkPoolReady(looper: Looper,
                    nodes: Sequence[TestNode],
-                   customTimeout):
+                   customTimeout = None):
     """
     Check that pool is in Ready state
     """

@@ -9,10 +9,9 @@ from plenum.common.looper import Looper
 from plenum.common.port_dispenser import genHa
 from plenum.common.util import adict
 
-
 plenum.common.log.loggingConfigured = False
 
-from plenum.test.cli.helper import newCLI, checkAllNodesUp, loadPlugin, \
+from plenum.test.cli.helper import newCLI, waitAllNodesUp, loadPlugin, \
     checkCmdValid, doByCtx
 
 
@@ -56,12 +55,10 @@ def validNodeNames(cli):
 @pytest.fixture("module")
 def createAllNodes(request, cli):
     cli.enterCmd("new node all")
-    cli.looper.run(eventually(checkAllNodesUp, cli, retryWait=1, timeout=20))
-
+    waitAllNodesUp(cli)
     def stopNodes():
         for node in cli.nodes.values():
             node.stop()
-
     request.addfinalizer(stopNodes)
 
 

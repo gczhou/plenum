@@ -34,7 +34,8 @@ def addNewClient(role, looper, creatorClient: Client, creatorWallet: Wallet,
     req = creatorWallet.signOp(op)
     creatorClient.submitReqs(req)
 
-    waitForSufficientRepliesForRequests(looper, creatorClient, [req], fVal=1)
+    waitForSufficientRepliesForRequests(looper, creatorClient,
+                                        requests=[req], fVal=1)
 
     return wallet
 
@@ -62,7 +63,8 @@ def addNewNode(looper, stewardClient, stewardWallet, newNodeName, tdir, tconf,
     req = stewardWallet.signOp(op)
     stewardClient.submitReqs(req)
 
-    waitForSufficientRepliesForRequests(looper, stewardClient, [req], fVal=1)
+    waitForSufficientRepliesForRequests(looper, stewardClient,
+                                        requests=[req], fVal=1)
 
     initLocalKeep(newNodeName, tdir, sigseed, override=True)
     node = nodeClass(newNodeName, basedirpath=tdir, config=tconf,
@@ -108,7 +110,8 @@ def changeNodeHa(looper, stewardClient, stewardWallet, node, nodeHa, clientHa):
 
     req = stewardWallet.signOp(op)
     stewardClient.submitReqs(req)
-    waitForSufficientRepliesForRequests(looper, stewardClient, [req], fVal=1)
+    waitForSufficientRepliesForRequests(looper, stewardClient,
+                                        requests=[req], fVal=1)
 
     node.nodestack.clearLocalKeep()
     node.nodestack.clearRemoteKeeps()
@@ -130,7 +133,8 @@ def changeNodeKeys(looper, stewardClient, stewardWallet, node, verkey):
     req = stewardWallet.signOp(op)
     stewardClient.submitReqs(req)
 
-    waitForSufficientRepliesForRequests(looper, stewardClient, [req], fVal=1)
+    waitForSufficientRepliesForRequests(looper, stewardClient,
+                                        requests=[req], fVal=1)
 
     node.nodestack.clearLocalRoleKeep()
     node.nodestack.clearRemoteRoleKeeps()
@@ -152,7 +156,8 @@ def suspendNode(looper, stewardClient, stewardWallet, nodeNym, nodeName):
     req = stewardWallet.signOp(op)
     stewardClient.submitReqs(req)
 
-    waitForSufficientRepliesForRequests(looper, stewardClient, [req], fVal=1)
+    waitForSufficientRepliesForRequests(looper, stewardClient,
+                                        requests=[req], fVal=1)
 
 def cancelNodeSuspension(looper, stewardClient, stewardWallet, nodeNym,
                          nodeName):
@@ -167,7 +172,8 @@ def cancelNodeSuspension(looper, stewardClient, stewardWallet, nodeNym,
 
     req = stewardWallet.signOp(op)
     stewardClient.submitReqs(req)
-    waitForSufficientRepliesForRequests(looper, stewardClient, [req], fVal=1)
+    waitForSufficientRepliesForRequests(looper, stewardClient,
+                                        requests=[req], fVal=1)
 
 
 def buildPoolClientAndWallet(clientData, tempDir, clientClass=None,

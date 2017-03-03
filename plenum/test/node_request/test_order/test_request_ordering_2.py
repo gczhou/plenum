@@ -63,7 +63,7 @@ def testOrderingCase2(looper, nodeSet, up, client1, wallet1):
         logger.debug('{} would be delaying commits'.format(node))
         node.nodeIbStasher.delay(specificCommits)
 
-    waitForSufficientRepliesForRequests(looper, client1, requests)
+    waitForSufficientRepliesForRequests(looper, client1, requests=requests)
 
     def ensureSlowNodesHaveAllTxns():
         nonlocal node1, node2

@@ -4,7 +4,7 @@ from plenum.common.eventually import eventually
 from plenum.common.util import randomString
 from plenum.test.conftest import getValueFromModule
 from plenum.test.helper import sendReqsToNodesAndVerifySuffReplies
-from plenum.test.node_catchup.helper import checkNodeLedgersForEquality
+from plenum.test.node_catchup.helper import waitNodeLedgersEquality
 from plenum.test.pool_transactions.helper import \
     addNewStewardAndNode, buildPoolClientAndWallet
 from plenum.test.test_client import TestClient
@@ -49,6 +49,6 @@ def nodeSetWithNodeAddedAfterSomeTxns(txnPoolNodeSet, nodeCreatedAfterSomeTxns):
 @pytest.fixture("module")
 def newNodeCaughtUp(txnPoolNodeSet, nodeSetWithNodeAddedAfterSomeTxns):
     looper, newNode, _, _, _, _ = nodeSetWithNodeAddedAfterSomeTxns
-    looper.run(eventually(checkNodeLedgersForEquality, newNode,
-                          *txnPoolNodeSet[:4], retryWait=1, timeout=10))
+    waitNodeLedgersEquality(looper, newNode, *txnPoolNodeSet[:4])
+
     return newNode

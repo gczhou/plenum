@@ -11,6 +11,8 @@ from plenum.test.helper import getPrimaryReplica, \
 from plenum.test.malicious_behaviors_node import makeNodeFaulty, \
     sendDuplicate3PhaseMsg
 from plenum.test.test_node import getNonPrimaryReplicas
+from plenum.test import waits
+
 
 whitelist = [Suspicions.DUPLICATE_CM_SENT.reason,
              'cannot process incoming COMMIT']
@@ -58,4 +60,6 @@ def testMultipleCommit(setup, looper, sent1):
                                              Suspicions.DUPLICATE_CM_SENT.code)) \
                        == 2
 
-    looper.run(eventually(chkSusp, retryWait=1, timeout=20))
+    numOfNodes = len(primaryRep.node.nodeReg)
+    timeout = waits.expectedTransactionExecutionTime(numOfNodes)
+    looper.run(eventually(chkSusp, retryWait=1, timeout=timeout))

@@ -588,13 +588,22 @@ def checkEveryNodeHasAtMostOnePrimary(looper: Looper,
 
 def checkProtocolInstanceSetup(looper: Looper, nodes: Sequence[TestNode],
                                retryWait: float = 1,
-                               timeout: float = None):
-    checkEveryProtocolInstanceHasOnlyOnePrimary(
-        looper=looper, nodes=nodes, retryWait=retryWait,
-        timeout=timeout if timeout else None)
+                               customTimeout: float = None):
 
-    checkEveryNodeHasAtMostOnePrimary(looper=looper, nodes=nodes,
-                                      retryWait=retryWait, customTimeout=timeout / 5)
+    totalTimeout = customTimeout or waits.expectedElectionTimeout(len(nodes))
+    instanceTimeout = totalTimeout * 4/5
+    nodeTimeout = totalTimeout * 1/5
+
+
+    checkEveryProtocolInstanceHasOnlyOnePrimary(looper=looper,
+                                                nodes=nodes,
+                                                retryWait=retryWait,
+                                                timeout=instanceTimeout)
+
+    checkEveryNodeHasAtMostOnePrimary(looper=looper,
+                                      nodes=nodes,
+                                      retryWait=retryWait,
+                                      customTimeout=nodeTimeout)
 
     primaryReplicas = {replica.instId: replica
                        for node in nodes
@@ -630,7 +639,7 @@ def ensureElectionsDone(looper: Looper,
         looper=looper,
         nodes=nodes,
         retryWait=retryWait,
-        timeout=setupCheckTimeout)
+        customTimeout=setupCheckTimeout)
 
 
 def genNodeReg(count=None, names=None) -> Dict[str, NodeDetail]:

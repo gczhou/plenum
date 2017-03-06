@@ -6,6 +6,7 @@ from plenum.common.types import CatchupReq
 from plenum.test.helper import sendRandomRequests
 from plenum.test.node_catchup.helper import checkNodeLedgersForEquality
 from plenum.test.test_node import checkNodesConnected
+from plenum.test import waits
 
 logger = getlogger()
 
@@ -34,5 +35,7 @@ def testNodeRequestingTxns(txnPoolNodeSet, nodeCreatedAfterSomeTxns):
         ignoreCatchupReq, txnPoolNodeSet[0].ledgerManager)
     sendRandomRequests(wallet, client, 10)
     looper.run(checkNodesConnected(txnPoolNodeSet))
+
+    timeout = waits.expectedCatchupTime()
     looper.run(eventually(checkNodeLedgersForEquality, newNode,
-                          *txnPoolNodeSet[:-1], retryWait=1, timeout=90))
+                          *txnPoolNodeSet[:-1], retryWait=1, timeout=timeout))

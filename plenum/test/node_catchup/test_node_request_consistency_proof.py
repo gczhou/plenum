@@ -10,6 +10,7 @@ from plenum.test.helper import sendRandomRequests
 from plenum.test.node_catchup.helper import checkNodeLedgersForEquality
 from plenum.test.test_ledger_manager import TestLedgerManager
 from plenum.test.test_node import checkNodesConnected
+from plenum.test import waits
 
 
 # @pytest.mark.skipif('sys.platform == "win32"', reason='SOV-465')
@@ -55,10 +56,12 @@ def testNodeRequestingConsProof(txnPoolNodeSet, nodeCreatedAfterSomeTxns):
     sendRandomRequests(wallet, client, 10)
     looper.run(checkNodesConnected(txnPoolNodeSet))
 
-    # `ConsistencyProofsTimeout` is set to 60 sec, so need to wait more than
-    # 60 sec.
+    #  wait more than `ConsistencyProofsTimeout`
+    # TODO: apply configurable timeout here
+
+    timeout = waits.expectedCatchupTime()
     looper.run(eventually(checkNodeLedgersForEquality, newNode,
-                          *txnPoolNodeSet[:-1], retryWait=1, timeout=75))
+                          *txnPoolNodeSet[:-1], retryWait=1, timeout=timeout))
     for node in txnPoolNodeSet[:-1]:
         assert node.ledgerManager.spylog.count(
             TestLedgerManager.processConsistencyProofReq.__name__) > 0

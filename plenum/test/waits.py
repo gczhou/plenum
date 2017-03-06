@@ -5,11 +5,10 @@ from plenum.common.config_util import getConfig
 from plenum.common.util import totalConnections
 from plenum.common import util
 logger = getlogger()
-
+config = getConfig()
 
 def _expectedNodeInterconnectionTime(count) -> float:
-    conf = getConfig()
-    return count * conf.ExpectedConnectTime + 1
+    return count * config.ExpectedConnectTime + 1
 
 
 def expectedNodeInterconnectionTime(nodeCount) -> float:
@@ -32,9 +31,10 @@ def expectedTransactionExecutionTime(nodeCount) -> float:
     return int(7.5 * nodeCount)
 
 
-def expectedCatchupTime() -> float:
+def expectedCatchupTime(customConsistencyProofsTimeout = None) -> float:
+    timeout = customConsistencyProofsTimeout or config.ConsistencyProofsTimeout
     # TODO: implement
-    return 90
+    return timeout + 30
 
 
 def expectedAgentCommunicationTime() -> float:

@@ -24,6 +24,10 @@ from ledger.util import F
 from libnacl import crypto_hash_sha256
 from plenum.common.error import error
 from six import iteritems, string_types
+import ipaddress
+
+from plenum.common.exceptions import EndpointException, MissingEndpoint, \
+    InvalidEndpointIpAddress, InvalidEndpointPort
 
 T = TypeVar('T')
 Seconds = TypeVar("Seconds", int, float)
@@ -576,3 +580,27 @@ def updateNestedDict(d, u, nestedKeysToUpdate=None):
 def createDirIfNotExists(dir):
     if not os.path.exists(dir):
         os.makedirs(dir)
+
+
+class Singleton(type):
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+
+def check_endpoint_valid(endpoint, required: bool=True):
+    if not endpoint:
+        if required:
+            raise MissingEndpoint()
+        else:
+            return
+    ip, port = endpoint.split(':')
+    try:
+        ipaddress.ip_address(ip)
+    except Exception as exc:
+        raise InvalidEndpointIpAddress(endpoint) from exc
+    if not (port.isdigit() and int(port) in range(1, 65536)):
+        raise InvalidEndpointPort(endpoint)

@@ -27,12 +27,11 @@ def waitNodeLedgersEquality(looper,
     :param referenceNode: node whose ledger used as a reference
     """
 
-    numOfNodes = len(otherNodes) + 1
-    timeout = customTimeout or waits.expectedPoolLedgerCheck(numOfNodes)
+    timeout = customTimeout or waits.expectedCatchupTime()
     looper.run(eventually(checkNodeLedgersForEquality,
                           referenceNode,
-                          otherNodes,
-                          retryWait=1, timeout=10))
+                          *otherNodes,
+                          retryWait=1, timeout=timeout))
 
 
 def ensureNewNodeConnectedClient(looper, client: TestClient, node: TestNode):

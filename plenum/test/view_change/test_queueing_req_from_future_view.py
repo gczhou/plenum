@@ -81,4 +81,4 @@ def testQueueingReqFromFutureView(delayedPerf, looper, nodeSet, up,
 
     # NodeA should now have pending 3 phase request for a later view
     # TODO[slow-factor]: add 'delay * nodeCount'
-    looper.run(eventually(checkPending3PhaseReqs, retryWait=1, timeout=30))
+    looper.run(eventually(checkPending3PhaseReqs, retryWait=1, timeout=40))

@@ -7,6 +7,7 @@ from plenum.common.request import ReqDigest
 from plenum.common.types import PrePrepare
 from plenum.server.replica import TPCStat
 from plenum.server.suspicion_codes import Suspicions
+from plenum.test import waits
 from plenum.test.helper import getPrimaryReplica, getNodeSuspicions
 from plenum.test.test_node import getNonPrimaryReplicas
 
@@ -30,12 +31,12 @@ def testPrePrepareWithHighSeqNo(looper, nodeSet, propagated1):
     nonPrimaryReplicas = getNonPrimaryReplicas(nodeSet, instId)
     req = propagated1.reqDigest
     primary.doPrePrepare(req)
+    timeout = waits.expectedPrePrepareTime(len(nodeSet))
     for np in nonPrimaryReplicas:
-        # TODO[slow-factor]: add expectedPrePrepareTime
         looper.run(
                 eventually(checkPreprepare, np, primary.viewNo,
                            primary.lastPrePrepareSeqNo - 1, req, 1,
-                           retryWait=.5, timeout=10))
+                           retryWait=.5, timeout=timeout))
 
     newReqDigest = ReqDigest(req.identifier, req.reqId + 1, req.digest)
     incorrectPrePrepareReq = PrePrepare(instId,
@@ -44,5 +45,6 @@ def testPrePrepareWithHighSeqNo(looper, nodeSet, propagated1):
                                         *newReqDigest,
                                         time.time())
     primary.send(incorrectPrePrepareReq, TPCStat.PrePrepareSent)
-    # TODO[slow-factor]: add ???
-    looper.run(eventually(chk, retryWait=1, timeout=50))
+
+    timeout = waits.expectedPrePrepareTime(len(nodeSet))
+    looper.run(eventually(chk, retryWait=1, timeout=timeout))

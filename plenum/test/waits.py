@@ -60,7 +60,7 @@ def expectedReqAckQuorumTime(nodeCount) -> float:
     return 5
 
 
-def expectedReqNAckQuorumTime(nodeCount) -> float:
+def expectedReqNAckQuorumTime() -> float:
     return 5
 
 
@@ -82,11 +82,15 @@ def expectedNominationTimeout(nodeCount) -> float:
 
 
 def expectedPoolGetReadyTimeout(nodeCount) -> float:
-    return 5 * nodeCount
+    return 10 * nodeCount
 
 
 def expectedClientConnectionTimeout(fVal) -> float:
     return 3 * fVal
+
+
+def expectedNextPerfCheck(nodes) -> float:
+    return max(n.perfCheckFreq for n in nodes) + 1
 
 
 def expectedPoolLedgerCheck(nodeCount) -> float:

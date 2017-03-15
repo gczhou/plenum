@@ -20,12 +20,12 @@ FlexFunc = TypeVar('flexFunc', CoroWrapper, Callable[[], T])
 def getSlowFactor():
     # TODO: this will return None if numOfCpus is not 8 or <= 4
     numOfCpus = os.cpu_count()
-    if numOfCpus == 8 or numOfCpus is None:
-        return 1
-    elif numOfCpus == 4:
+    if numOfCpus is None or numOfCpus == 1:
+        return 2.5
+    elif numOfCpus <= 4:
         return 1.5
-    elif numOfCpus < 4:
-        return 2
+    else:
+        return 1
 
 slowFactor = getSlowFactor()
 

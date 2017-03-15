@@ -44,19 +44,17 @@ def testQueueingReqFromFutureView(delayedPerf, looper, nodeSet, up,
     # Every node except Node A should have a view change
     for node in nodeSet:
         if node.name != nodeA.name:
-            # TODO[slow-factor]: add 'delay * nodeCount'
             looper.run(eventually(
                 partial(checkViewChangeInitiatedForNode, node, 1),
                 retryWait=1,
-                timeout=20))
+                timeout=delay * nodeCount))
 
     # Node A's view should not have changed yet
     with pytest.raises(AssertionError):
-        # TODO[slow-factor]: add 'delay * nodeCount'
         looper.run(eventually(partial(
             checkViewChangeInitiatedForNode, nodeA, 1),
             retryWait=1,
-            timeout=20))
+            timeout=delay * nodeCount))
 
     # NodeA should not have any pending 3 phase request for a later view
     for r in nodeA.replicas:  # type: TestReplica
@@ -80,5 +78,4 @@ def testQueueingReqFromFutureView(delayedPerf, looper, nodeSet, up,
             assert len(r.threePhaseMsgsForLaterView) > 0
 
     # NodeA should now have pending 3 phase request for a later view
-    # TODO[slow-factor]: add 'delay * nodeCount'
-    looper.run(eventually(checkPending3PhaseReqs, retryWait=1, timeout=40))
+    looper.run(eventually(checkPending3PhaseReqs, retryWait=1, timeout=delay * nodeCount))
